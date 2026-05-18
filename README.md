@@ -171,6 +171,27 @@ Before using the application, create a local `private/users.php` file with a fir
 
 For privacy reasons, real production users are not included in this repository.
 
+You can use the example file provided in:
+
+```text
+examples/users.example.php
+```
+
+Copy it into:
+
+```text
+private/users.php
+```
+
+Then log in with:
+
+```text
+username: admin
+password: admin12345
+```
+
+This account is intended only for local testing.
+
 ## Portfolio Relevance
 
 This project demonstrates my ability to build deployed software tools for real users.
