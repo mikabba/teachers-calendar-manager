@@ -53,7 +53,7 @@ The application focuses on usability, clarity and practical workflow support rat
 
 ### PDF Export
 
-![PDF Export](assets/teachers-calendar-pdf-export.png)
+![PDF Export](assets/teachers-pdf-export.png)
 
 ## Technical Overview
 
