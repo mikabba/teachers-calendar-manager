@@ -165,6 +165,20 @@ private/.gitkeep
 
 Real user and booking data are intentionally excluded from version control.
 
+Example runtime files are provided in:
+
+```text
+examples/users.example.php
+examples/database.example.php
+```
+
+To run the application locally, copy them into:
+
+```text
+private/users.php
+private/database.php
+```
+
 ### 4. First admin user
 
 Before using the application, create a local `private/users.php` file with a first admin user.
