@@ -1,4 +1,4 @@
-﻿# Private runtime data
+# Private runtime data
 /private/*
 !/private/.gitkeep
 
