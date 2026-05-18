@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+    <title>Calendario Docenti</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="header-block">
+                <div class="hero-copy">
+                    <p class="eyebrow">Gestione aule e lezioni</p>
+                    <h1>Calendario Docenti</h1>
+                    <p class="subtitle">
+                        Calendario settimanale con lezioni ordinarie, recuperi e disponibilità libere per intervalli orari reali.
+                    </p>
+
+                    <div class="hero-chips" aria-label="Funzioni principali">
+                        <span class="hero-chip">Intervalli 15:00–20:30</span>
+                        <span class="hero-chip">Durata 50 o 60 minuti</span>
+                        <span class="hero-chip">Disponibilità per aula</span>
+                    </div>
+                </div>
+
+                <div id="user-panel" class="user-panel hidden" aria-live="polite">
+                    <div class="user-panel-main">
+                        <div class="user-panel-text">
+                            <span class="user-panel-label">Utente collegato</span>
+                            <strong id="user-display-name"></strong>
+                            <span id="user-role-label"></span>
+                        </div>
+                        <div class="user-panel-actions">
+                            <button id="change-password-btn" class="btn btn-secondary btn-large" type="button">Cambia password</button>
+                            <button id="admin-add-user-btn" class="btn btn-primary btn-large hidden" type="button">Aggiungi utente</button>
+                            <button id="admin-remove-user-btn" class="btn btn-secondary btn-large hidden" type="button">Rimuovi utente</button>
+                            <button id="admin-recover-credentials-btn" class="btn btn-primary btn-large hidden" type="button">Recupero credenziali</button>
+                            <button id="new-recovery-btn" class="btn btn-danger btn-large" type="button">Prenota un recupero</button>
+                            <button id="logout-btn" class="btn btn-secondary" type="button">Esci</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-main">
+        <div class="container">
+            <section id="login-section" class="intro-panel">
+                <div class="intro-card auth-card">
+                    <div class="intro-head">
+                        <div>
+                            <p class="section-kicker">Accesso</p>
+                            <h2>Accedi al calendario</h2>
+                            <p>Inserisci le credenziali assegnate per accedere al calendario.</p>
+                        </div>
+                    </div>
+
+                    <form id="login-form" class="form-layout auth-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" autocomplete="username" placeholder="Es. mrossi" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Inserisci la password" required>
+                            </div>
+                        </div>
+
+                        <div class="auth-actions">
+                            <button type="submit" class="btn btn-primary btn-large">Accedi</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="app-section" class="hidden">
+                <section class="intro-panel dashboard-panel">
+                    <div class="intro-card">
+                        <div class="intro-head">
+                            <div>
+                                <p class="section-kicker">Guida rapida</p>
+                                <h2>Come usare il calendario</h2>
+                                <p>Ogni giorno mostra le lezioni già presenti e una vista tabellare completa 15:00–20:30 con spazi liberi e azioni rapide per aula.</p>
+                            </div>
+                            <div class="status-legend" aria-label="Legenda colori">
+                                <span class="legend-pill legend-pill-ordinary">Lezione ordinaria</span>
+                                <span class="legend-pill legend-pill-recovery">Recupero</span>
+                                <span class="legend-pill legend-pill-empty">Intervallo disponibile</span>
+                            </div>
+                        </div>
+
+                        <div class="instructions-grid">
+                            <div class="instruction-item instruction-item-primary">
+                                <span class="instruction-step">1</span>
+                                <div>
+                                    <h3>Inserire una lezione ordinaria</h3>
+                                    <p>Apri il giorno desiderato, scegli l’aula e usa la vista tabellare per inserire la lezione direttamente nella riga libera corretta.</p>
+                                </div>
+                            </div>
+
+                            <div class="instruction-item">
+                                <span class="instruction-step">2</span>
+                                <div>
+                                    <h3>Prenotare un recupero</h3>
+                                    <p>Puoi usare il pulsante generale oppure quello presente in ogni aula, così apri subito il recupero dal contesto corretto.</p>
+                                </div>
+                            </div>
+
+                            <div class="instruction-item">
+                                <span class="instruction-step">3</span>
+                                <div>
+                                    <h3>Orari di inizio liberi</h3>
+                                    <p>Dentro ogni intervallo puoi inserire l’ora di inizio reale. Il sistema accetta durate da 50 o 60 minuti e blocca gli overlap.</p>
+                                </div>
+                            </div>
+
+                            <div class="instruction-item">
+                                <span class="instruction-step">4</span>
+                                <div>
+                                    <h3>Capire cosa puoi modificare</h3>
+                                    <p>Puoi eliminare solo le tue lezioni ordinarie. I recuperi si eliminano dalla tabella finale; la segreteria può intervenire su tutto.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="mobile-days-nav" id="mobile-days-nav">
+                    <div class="mobile-days-head">
+                        <p class="mobile-days-title">Vista mobile</p>
+                        <p class="mobile-days-copy">Seleziona un giorno per vedere la pianificazione della giornata in modalità compatta.</p>
+                    </div>
+                    <div class="mobile-days-tabs" role="tablist" aria-label="Seleziona giorno">
+                        <button type="button" class="mobile-day-tab active" data-day="lunedi" role="tab" aria-selected="true" tabindex="0">Lun</button>
+                        <button type="button" class="mobile-day-tab" data-day="martedi" role="tab" aria-selected="false" tabindex="-1">Mar</button>
+                        <button type="button" class="mobile-day-tab" data-day="mercoledi" role="tab" aria-selected="false" tabindex="-1">Mer</button>
+                        <button type="button" class="mobile-day-tab" data-day="giovedi" role="tab" aria-selected="false" tabindex="-1">Gio</button>
+                        <button type="button" class="mobile-day-tab" data-day="venerdi" role="tab" aria-selected="false" tabindex="-1">Ven</button>
+                    </div>
+                    <div class="mobile-export-buttons" aria-label="Scarica PDF giornaliero">
+                        <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn" data-day="lunedi">PDF Lunedì</button>
+                        <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn" data-day="martedi">PDF Martedì</button>
+                        <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn" data-day="mercoledi">PDF Mercoledì</button>
+                        <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn" data-day="giovedi">PDF Giovedì</button>
+                        <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn" data-day="venerdi">PDF Venerdì</button>
+                    </div>
+                </section>
+
+                <section id="tables-container" class="days-grid" aria-label="Calendario settimanale">
+                    <article class="day-table" data-day="lunedi">
+                        <div class="day-card">
+                            <button class="day-card-header day-toggle" type="button" aria-expanded="true">
+                                <div class="day-title-block">
+                                    <h2>Lunedì</h2>
+                                    <span class="day-date-label" id="day-date-lunedi"></span>
+                                </div>
+                                <div class="day-header-right">
+<span class="day-badge">Vista giorno</span>
+                                    <span class="day-toggle-icon" aria-hidden="true">▾</span>
+                                </div>
+                            </button>
+                            <div class="day-export-toolbar">
+                                <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn desktop-export-day-btn" data-day="lunedi">Scarica PDF Lunedi</button>
+                            </div>
+                            <div class="day-card-body" id="day-content-lunedi"></div>
+                        </div>
+                    </article>
+
+                    <article class="day-table" data-day="martedi">
+                        <div class="day-card">
+                            <button class="day-card-header day-toggle" type="button" aria-expanded="false">
+                                <div class="day-title-block">
+                                    <h2>Martedì</h2>
+                                    <span class="day-date-label" id="day-date-martedi"></span>
+                                </div>
+                                <div class="day-header-right">
+<span class="day-badge">Vista giorno</span>
+                                    <span class="day-toggle-icon" aria-hidden="true">▾</span>
+                                </div>
+                            </button>
+                            <div class="day-export-toolbar">
+                                <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn desktop-export-day-btn" data-day="martedi">Scarica PDF Martedi</button>
+                            </div>
+                            <div class="day-card-body" id="day-content-martedi"></div>
+                        </div>
+                    </article>
+
+                    <article class="day-table" data-day="mercoledi">
+                        <div class="day-card">
+                            <button class="day-card-header day-toggle" type="button" aria-expanded="false">
+                                <div class="day-title-block">
+                                    <h2>Mercoledì</h2>
+                                    <span class="day-date-label" id="day-date-mercoledi"></span>
+                                </div>
+                                <div class="day-header-right">
+<span class="day-badge">Vista giorno</span>
+                                    <span class="day-toggle-icon" aria-hidden="true">▾</span>
+                                </div>
+                            </button>
+                            <div class="day-export-toolbar">
+                                <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn desktop-export-day-btn" data-day="mercoledi">Scarica PDF Mercoledi</button>
+                            </div>
+                            <div class="day-card-body" id="day-content-mercoledi"></div>
+                        </div>
+                    </article>
+
+                    <article class="day-table" data-day="giovedi">
+                        <div class="day-card">
+                            <button class="day-card-header day-toggle" type="button" aria-expanded="false">
+                                <div class="day-title-block">
+                                    <h2>Giovedì</h2>
+                                    <span class="day-date-label" id="day-date-giovedi"></span>
+                                </div>
+                                <div class="day-header-right">
+<span class="day-badge">Vista giorno</span>
+                                    <span class="day-toggle-icon" aria-hidden="true">▾</span>
+                                </div>
+                            </button>
+                            <div class="day-export-toolbar">
+                                <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn desktop-export-day-btn" data-day="giovedi">Scarica PDF Giovedi</button>
+                            </div>
+                            <div class="day-card-body" id="day-content-giovedi"></div>
+                        </div>
+                    </article>
+
+                    <article class="day-table" data-day="venerdi">
+                        <div class="day-card">
+                            <button class="day-card-header day-toggle" type="button" aria-expanded="false">
+                                <div class="day-title-block">
+                                    <h2>Venerdì</h2>
+                                    <span class="day-date-label" id="day-date-venerdi"></span>
+                                </div>
+                                <div class="day-header-right">
+<span class="day-badge">Vista giorno</span>
+                                    <span class="day-toggle-icon" aria-hidden="true">▾</span>
+                                </div>
+                            </button>
+                            <div class="day-export-toolbar">
+                                <button type="button" class="btn btn-secondary btn-small export-day-pdf-btn desktop-export-day-btn" data-day="venerdi">Scarica PDF Venerdi</button>
+                            </div>
+                            <div class="day-card-body" id="day-content-venerdi"></div>
+                        </div>
+                    </article>
+                </section>
+
+                <section class="intro-panel summary-panel">
+                    <div class="intro-card">
+                        <div class="intro-head">
+                            <div>
+                                <p class="section-kicker">Recuperi programmati</p>
+                                <h2>Elenco recuperi</h2>
+                                <p>Qui trovi tutti i recuperi salvati con data reale. Da questa tabella puoi eliminare quelli consentiti.</p>
+                            </div>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table class="summary-table" id="recoveries-table">
+                                <thead>
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Giorno</th>
+                                        <th>Orario</th>
+                                        <th>Aula</th>
+                                        <th>Corso</th>
+                                        <th>Docente</th>
+                                        <th>Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="empty-summary">Nessun recupero presente.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </div>
+    </main>
+
+    <div id="ordinary-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="ordinary-modal-title">
+        <div class="dialog">
+            <button id="close-ordinary-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p class="dialog-kicker">Nuova lezione ordinaria</p>
+                <h2 id="ordinary-modal-title">Inserisci la lezione</h2>
+                <p id="ordinary-slot-label"></p>
+            </div>
+
+            <div class="dialog-note">Seleziona l’orario di inizio reale all’interno dell’intervallo scelto e poi salva.</div>
+
+            <form id="ordinary-form" class="form-layout">
+                <input type="hidden" id="ordinary-day-key">
+                <input type="hidden" id="ordinary-room-key">
+                <input type="hidden" id="ordinary-interval-start">
+                <input type="hidden" id="ordinary-interval-end">
+
+                <div class="form-group">
+                    <label for="ordinary-course-name">Nome del corso o della lezione</label>
+                    <input type="text" id="ordinary-course-name" placeholder="Es. Pianoforte corso base" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="ordinary-teacher-name">Docente</label>
+                        <input type="text" id="ordinary-teacher-name" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="ordinary-start-time">Ora inizio</label>
+                        <input type="time" id="ordinary-start-time" step="60" required>
+                    </div>
+                </div>
+
+                <div class="form-row compact-row">
+                    <div class="form-group">
+                        <label for="ordinary-duration">Durata</label>
+                        <select id="ordinary-duration" required>
+                            <option value="50">50 minuti</option>
+                            <option value="60">60 minuti</option>
+                        </select>
+                    </div>
+                    <div class="form-group readonly-field">
+                        <label for="ordinary-room-label">Aula</label>
+                        <input type="text" id="ordinary-room-label" readonly>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Salva lezione ordinaria</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="recovery-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="recovery-modal-title">
+        <div class="dialog dialog-wide">
+            <button id="close-recovery-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p class="dialog-kicker">Prenota recupero</p>
+                <h2 id="recovery-modal-title">Assistente recupero</h2>
+                <p>Inserisci i dati, cerca la disponibilità del giorno e poi scegli l’intervallo più adatto.</p>
+            </div>
+
+            <div class="steps-strip" aria-label="Passaggi per il recupero">
+                <span class="step-pill">1. Inserisci i dati</span>
+                <span class="step-pill">2. Scegli un intervallo</span>
+                <span class="step-pill">3. Imposta l’ora di inizio</span>
+            </div>
+
+            <form id="recovery-search-form" class="form-layout">
+                <div class="form-group">
+                    <label for="recovery-course-name">Nome del corso o della lezione</label>
+                    <input type="text" id="recovery-course-name" placeholder="Es. Recupero teoria musicale" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recovery-date">Data del recupero</label>
+                        <input type="date" id="recovery-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recovery-teacher-name">Docente</label>
+                        <input type="text" id="recovery-teacher-name" readonly>
+                    </div>
+                </div>
+
+                <div class="form-row compact-row">
+                    <div class="form-group">
+                        <label for="recovery-duration">Durata</label>
+                        <select id="recovery-duration" required>
+                            <option value="50">50 minuti</option>
+                            <option value="60">60 minuti</option>
+                        </select>
+                    </div>
+                    <div class="form-group readonly-field hidden" id="recovery-preferred-room-group">
+                        <label for="recovery-preferred-room">Aula selezionata</label>
+                        <input type="text" id="recovery-preferred-room" readonly>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large">Trova disponibilità</button>
+            </form>
+
+            <div id="availability-box" class="availability-box hidden">
+                <div class="availability-head">
+                    <h3>Disponibilità del giorno</h3>
+                    <p id="availability-caption"></p>
+                </div>
+                <div id="availability-intervals" class="availability-intervals"></div>
+
+                <div id="recovery-booking-box" class="selected-interval-box hidden">
+                    <h3>Intervallo selezionato</h3>
+                    <p id="selected-recovery-interval-label"></p>
+                    <div class="form-row compact-row">
+                        <div class="form-group">
+                            <label for="recovery-start-time">Ora inizio</label>
+                            <input type="time" id="recovery-start-time" step="60">
+                        </div>
+                        <div class="form-group readonly-field">
+                            <label for="recovery-room-label">Aula</label>
+                            <input type="text" id="recovery-room-label" readonly>
+                        </div>
+                    </div>
+                    <div class="dialog-actions compact-actions">
+                        <button id="save-recovery-btn" class="btn btn-primary btn-large" type="button">Salva recupero</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="change-password-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="change-password-title">
+        <div class="dialog dialog-small">
+            <button id="close-change-password-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p class="dialog-kicker">Account</p>
+                <h2 id="change-password-title">Modifica password</h2>
+                <p>Aggiorna la password del tuo account.</p>
+            </div>
+
+            <form id="change-password-form" class="form-layout">
+                <div class="form-group">
+                    <label for="change-password-current">Password attuale</label>
+                    <input type="password" id="change-password-current" autocomplete="current-password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="change-password-new">Nuova password</label>
+                    <input type="password" id="change-password-new" autocomplete="new-password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="change-password-confirm">Conferma nuova password</label>
+                    <input type="password" id="change-password-confirm" autocomplete="new-password" required>
+                </div>
+
+                <p class="dialog-note">La nuova password deve contenere almeno 8 caratteri.</p>
+
+                <div class="dialog-actions compact-actions">
+                    <button id="cancel-change-password-btn" class="btn btn-secondary btn-large" type="button">Annulla</button>
+                    <button class="btn btn-primary btn-large" type="submit">Salva password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-user-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="admin-user-modal-title">
+        <div class="dialog">
+            <button id="close-admin-user-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p id="admin-user-modal-kicker" class="dialog-kicker">Gestione utenti</p>
+                <h2 id="admin-user-modal-title">Aggiungi utente</h2>
+                <p id="admin-user-modal-copy">Inserisci i dati necessari per aggiornare l’archivio utenti privato.</p>
+            </div>
+
+            <form id="admin-user-form" class="form-layout">
+                <input type="hidden" id="admin-user-mode" value="add">
+
+                <div id="admin-user-add-fields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="admin-user-display-name">Display name</label>
+                            <input type="text" id="admin-user-display-name" placeholder="Es. Mario Rossi">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-user-username">Username</label>
+                            <input type="text" id="admin-user-username" placeholder="Es. mrossi">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="admin-user-password">Password iniziale</label>
+                            <input type="text" id="admin-user-password" placeholder="Almeno 8 caratteri">
+                        </div>
+                        <div class="form-group">
+                            <label for="admin-user-role">Ruolo</label>
+                            <select id="admin-user-role">
+                                <option value="teacher">Docente</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="dialog-note">La password viene salvata in forma hashata, non in chiaro.</p>
+                </div>
+
+                <div id="admin-user-remove-fields" class="hidden">
+                    <div class="form-group">
+                        <label for="admin-remove-user-search">Cerca utente</label>
+                        <input type="text" id="admin-remove-user-search" placeholder="Digita per filtrare per display name">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-remove-user-select">Utente da rimuovere</label>
+                        <select id="admin-remove-user-select" size="8"></select>
+                    </div>
+                    <p class="dialog-note">L’elenco mostra gli utenti ordinati per display name.</p>
+                </div>
+
+                <div class="dialog-actions compact-actions">
+                    <button id="admin-user-submit-btn" class="btn btn-primary btn-large" type="submit">Salva utente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-reset-password-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="admin-credentials-title">
+        <div class="dialog">
+            <button id="close-admin-credentials-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p class="dialog-kicker">Sicurezza account</p>
+                <h2 id="admin-credentials-title">Reset password utente</h2>
+                <p>Filtra per display name, seleziona un utente e genera una password temporanea da comunicargli.</p>
+            </div>
+
+            <form id="admin-reset-password-form" class="form-layout">
+                <div class="form-group">
+                    <label for="admin-credentials-search">Cerca utente</label>
+                    <input type="text" id="admin-credentials-search" placeholder="Digita per filtrare per display name">
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-credentials-select">Utente</label>
+                    <select id="admin-credentials-select" size="8"></select>
+                </div>
+
+                <div id="admin-credentials-result" class="admin-credentials-result hidden">
+                    <div class="form-row">
+                        <div class="form-group readonly-field">
+                            <label for="credential-display-name">Display name</label>
+                            <input type="text" id="credential-display-name" readonly>
+                        </div>
+                        <div class="form-group readonly-field">
+                            <label for="credential-role">Ruolo</label>
+                            <input type="text" id="credential-role" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group readonly-field">
+                            <label for="credential-username">Username</label>
+                            <input type="text" id="credential-username" readonly>
+                        </div>
+                        <div class="form-group readonly-field">
+                            <label for="credential-password">Password temporanea</label>
+                            <input type="text" id="credential-password" readonly>
+                        </div>
+                    </div>
+                    <p class="dialog-note">La password visualizzata è solo quella temporanea appena generata. Le password salvate non sono più leggibili.</p>
+                </div>
+
+                <div class="dialog-actions compact-actions">
+                    <button id="close-admin-credentials-btn" class="btn btn-secondary btn-large" type="button">Chiudi</button>
+                    <button class="btn btn-primary btn-large" type="submit">Genera password temporanea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="admin-summary-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="admin-summary-title">
+        <div class="dialog dialog-small">
+            <button id="close-admin-summary-modal" class="dialog-close" type="button" aria-label="Chiudi">×</button>
+            <div class="dialog-header">
+                <p id="admin-summary-kicker" class="dialog-kicker">Riepilogo calendario</p>
+                <h2 id="admin-summary-title">Lezioni della giornata</h2>
+                <p id="admin-summary-subtitle"></p>
+            </div>
+            <div id="admin-summary-content" class="admin-summary-content"></div>
+            <div class="dialog-actions">
+                <button id="close-admin-summary-btn" class="btn btn-primary btn-large" type="button">Ho capito</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="notification-message">
+        <div class="dialog dialog-small">
+            <div class="dialog-header center">
+                <p class="dialog-kicker">Messaggio</p>
+                <p id="notification-message" class="dialog-message"></p>
+            </div>
+            <button id="close-notification" class="btn btn-primary btn-large" type="button">Ho capito</button>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="overlay hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="confirm-message">
+        <div class="dialog dialog-small">
+            <div class="dialog-header center">
+                <p class="dialog-kicker">Conferma</p>
+                <h2>Conferma operazione</h2>
+                <p id="confirm-message" class="dialog-message"></p>
+            </div>
+            <div class="dialog-actions">
+                <button id="confirm-yes" class="btn btn-danger btn-large" type="button">Conferma</button>
+                <button id="confirm-no" class="btn btn-secondary btn-large" type="button">Annulla</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="export-pdf.js"></script>
+</body>
+</html>

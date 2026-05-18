@@ -1,0 +1,9 @@
+﻿# Private runtime data
+/private/*
+!/private/.gitkeep
+
+# Local / system files
+*.log
+.DS_Store
+Thumbs.db
+.env
