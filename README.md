@@ -130,9 +130,46 @@ The system also enforces the allowed daily time window:
 
 This prevents invalid bookings outside the operational schedule.
 
-## Security and Privacy Notes
+## Local Setup
 
-This public repository does not include real private data.
+This project requires a PHP-enabled web server.
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/mikabba/teachers-calendar-manager.git
+cd teachers-calendar-manager
+```
+
+### 2. Start a local PHP server
+
+```bash
+php -S localhost:8000
+```
+
+Then open:
+
+```text
+http://localhost:8000/calendariodocenti.html
+```
+
+### 3. Runtime data
+
+The application stores runtime data inside the `private/` folder.
+
+The repository includes only:
+
+```text
+private/.gitkeep
+```
+
+Real user and booking data are intentionally excluded from version control.
+
+### 4. First admin user
+
+Before using the application, create a local `private/users.php` file with a first admin user.
+
+For privacy reasons, real production users are not included in this repository.
 
 ## Portfolio Relevance
 
