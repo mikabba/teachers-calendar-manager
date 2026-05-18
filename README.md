@@ -92,12 +92,43 @@ The backend separates authentication logic, user management, ordinary lesson sch
 
 ## Scheduling Logic
 
-The application separates:
+The application separates two types of lessons:
 
+- **ordinary lessons**, recurring weekly and associated with a weekday;
+- **recovery lessons**, date-specific and associated with a real calendar date.
+
+Each booking is represented by:
+
+- teacher;
+- room;
+- lesson type;
+- course name;
+- start time;
+- duration;
+- computed end time.
+
+Before saving a booking, the backend checks whether the selected teacher or room is already occupied in the requested time interval.
+
+Two intervals are considered conflicting when they overlap:
+
+```text
+startA < endB AND endA > startB
+```
+
+This rule is applied to:
+
+- room availability;
+- teacher availability;
 - ordinary weekly lessons;
 - date-specific recovery lessons.
 
-Before saving a lesson, the backend checks whether the selected room or teacher is already occupied in the requested time interval.
+The system also enforces the allowed daily time window:
+
+```text
+15:00–20:30
+```
+
+This prevents invalid bookings outside the operational schedule.
 
 ## Security and Privacy Notes
 
