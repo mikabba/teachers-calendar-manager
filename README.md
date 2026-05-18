@@ -89,6 +89,37 @@ Calendar Data
 
 The backend separates authentication logic, user management, ordinary lesson scheduling, recovery lesson scheduling and PDF-oriented data loading into dedicated endpoints.
 
+## Project Structure
+
+```text
+teachers-calendar-manager/
+├── calendariodocenti.html        # Main application page
+├── styles.css                    # Application styling and responsive layout
+├── script.js                     # Main frontend logic and AJAX interactions
+├── export-pdf.js                 # PDF export logic
+├── auth.php                      # Authentication, authorization and shared backend utilities
+├── login.php                     # Login endpoint
+├── logout.php                    # Logout endpoint
+├── whoami.php                    # Current session/user endpoint
+├── load.php                      # Loads ordinary and recovery lessons
+├── save_ordinary.php             # Saves ordinary weekly lessons
+├── save_recovery.php             # Saves date-specific recovery lessons
+├── delete_ordinary.php           # Deletes ordinary lessons
+├── delete_recovery.php           # Deletes recovery lessons
+├── check_recovery_availability.php # Checks available recovery lesson slots
+├── add_user.php                  # Admin endpoint for adding users
+├── remove_user.php               # Admin endpoint for removing users
+├── list_users.php                # Admin endpoint for listing users
+├── get_user_credentials.php      # Admin endpoint for resetting user credentials
+├── change_password.php           # User password change endpoint
+├── examples/
+│   ├── users.example.php         # Example local users file
+│   └── database.example.php      # Example local bookings database
+├── private/
+│   └── .gitkeep                  # Placeholder for private runtime data
+└── assets/
+    └── screenshots
+```
 
 ## Scheduling Logic
 
