@@ -57,13 +57,38 @@ The application focuses on usability, clarity and practical workflow support rat
 
 ## Technical Overview
 
-The application is built with:
+The application follows a lightweight full-stack architecture:
 
-- HTML, CSS and JavaScript for the frontend;
-- jQuery for UI interactions and AJAX calls;
-- PHP for authentication, persistence and scheduling endpoints;
-- jsPDF for daily calendar PDF export;
-- file-based private storage for users and bookings.
+| Layer | Technologies | Responsibility |
+|---|---|---|
+| Frontend | HTML, CSS, JavaScript, jQuery | User interface, calendar rendering, modals, AJAX interactions |
+| Backend | PHP | Authentication, authorization, scheduling endpoints, persistence logic |
+| Storage | Private PHP array files | File-based storage for users, ordinary lessons and recovery lessons |
+| PDF Export | jsPDF, jsPDF-AutoTable | Daily calendar export for operational use |
+
+The application is intentionally simple and self-contained, making it easy to deploy on a standard PHP-based hosting environment without requiring a full database server.
+
+
+## System Architecture
+
+```text
+User Interface
+    |
+    | AJAX requests
+    v
+PHP Endpoints
+    |
+    | authentication, validation, scheduling rules
+    v
+Private Storage
+    |
+    | users.php / database.php
+    v
+Calendar Data
+```
+
+The backend separates authentication logic, user management, ordinary lesson scheduling, recovery lesson scheduling and PDF-oriented data loading into dedicated endpoints.
+
 
 ## Scheduling Logic
 
