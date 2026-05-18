@@ -251,10 +251,17 @@ It complements my engineering portfolio by showing:
 - deployment of a working tool in a real context;
 - documentation of a real-world software project.
 
+## Known Limitations
+
+- The current version uses file-based storage instead of a relational database.
+- The application is designed for a specific music school workflow and may require adaptation for other organizations.
+- The public repository does not include production user data or real booking records.
+- The current setup is intended as a lightweight deployed tool, not as a large-scale multi-tenant platform.
+
 ## Next Steps
 
-- Add setup instructions
+- Add a system overview diagram
+- Improve deployment documentation
 - Add a sanitized demo dataset
-- Add system architecture diagram
-- Improve technical documentation
-- Add screenshots for mobile and admin views
+- Add automated validation tests for scheduling conflicts
+- Consider migrating from file-based storage to SQLite or MySQL for larger deployments
