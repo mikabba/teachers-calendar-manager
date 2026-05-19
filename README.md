@@ -41,19 +41,34 @@ The application focuses on usability, clarity and practical workflow support rat
 - PDF export
 - Overlap prevention for conflicting bookings
 
+## User Roles
+
+The application supports two main user roles:
+
+| Role | Capabilities |
+|---|---|
+| Admin | Manage users, reset credentials, access scheduling data and support operational administration |
+| Teacher | Log in, view calendar data, manage teacher-specific workflows and access daily or weekly schedule views |
+
 ## Screenshots
 
 ### Login
 
-![Login](assets/teachers-calendar-login.png)
+<p align="center">
+  <img src="assets/teachers-calendar-login.png" alt="Login" width="500">
+</p>
 
 ### Weekly View
 
-![Weekly View](assets/teachers-calendar-weekly-view.png)
+<p align="center">
+  <img src="assets/teachers-calendar-weekly-view.png" alt="Weekly view" width="500">
+</p>
 
 ### PDF Export
 
-![PDF Export](assets/teachers-pdf-export.png)
+<p align="center">
+  <img src="assets/teachers-pdf-export.png" alt="Pdf export" width="500">
+</p>
 
 ## Technical Overview
 
@@ -61,13 +76,12 @@ The application follows a lightweight full-stack architecture:
 
 | Layer | Technologies | Responsibility |
 |---|---|---|
-| Frontend | HTML, CSS, JavaScript, jQuery | User interface, calendar rendering, modals, AJAX interactions |
-| Backend | PHP | Authentication, authorization, scheduling endpoints, persistence logic |
-| Storage | Private PHP array files | File-based storage for users, ordinary lessons and recovery lessons |
+| Frontend | HTML, CSS, JavaScript, jQuery | User interface, calendar rendering, modals and AJAX interactions |
+| Backend | PHP | Authentication, authorization, scheduling endpoints and persistence logic |
+| Storage | File-based PHP data storage | Private runtime storage for users, ordinary lessons and recovery lessons |
 | PDF Export | jsPDF, jsPDF-AutoTable | Daily calendar export for operational use |
 
 The application is intentionally simple and self-contained, making it easy to deploy on a standard PHP-based hosting environment without requiring a full database server.
-
 
 ## System Architecture
 
@@ -118,7 +132,10 @@ teachers-calendar-manager/
 ├── private/
 │   └── .gitkeep                  # Placeholder for private runtime data
 └── assets/
-    └── screenshots
+    ├── teachers-calendar-login.png
+    ├── teachers-calendar-weekly-view.png
+    └── teachers-pdf-export.png
+    
 ```
 
 ## Scheduling Logic
@@ -258,10 +275,10 @@ It complements my engineering portfolio by showing:
 - The public repository does not include production user data or real booking records.
 - The current setup is intended as a lightweight deployed tool, not as a large-scale multi-tenant platform.
 
-## Next Steps
+## Future Improvements
 
 - Add a system overview diagram
 - Improve deployment documentation
 - Add a sanitized demo dataset
 - Add automated validation tests for scheduling conflicts
-- Consider migrating from file-based storage to SQLite or MySQL for larger deployments
+- Evaluate migration from file-based storage to SQLite or MySQL for larger deployments
